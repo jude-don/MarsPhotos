@@ -16,21 +16,20 @@
 package com.example.marsphotos.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.example.marsphotos.R
 import com.example.marsphotos.datamodels.MarsPhotos
-import com.example.marsphotos.ui.theme.MarsPhotosTheme
 
 @Composable
 fun HomeScreen(
@@ -38,7 +37,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     when (marsUiState){
-        is MarsUiState.Success -> ResultScreen(marsUiState.listOfObjectPhotos, modifier)
+        is MarsUiState.Success -> ResultScreen(marsUiState.photos, modifier)
         is MarsUiState.Loading -> LoadingScreen(modifier)
         is MarsUiState.Error -> ErrorScreen(modifier)
     }
@@ -50,9 +49,21 @@ fun HomeScreen(
  */
 @Composable
 fun ResultScreen(marsUiState: List<MarsPhotos>, modifier: Modifier = Modifier) {
+//    Box(
+//        contentAlignment = Alignment.Center,
+//        modifier = modifier.fillMaxSize()
+//    ) {
+//        Text(text = marsUiState)
+//    }
+    
     LazyColumn(){
-        items(marsUiState.size){
-            itemList(image_url = marsUiState[it].imgSrc, modifier = modifier)
+        items(marsUiState){
+            item->
+            itemList(
+                image_url = item.imgSrc,
+                modifier = modifier,
+                itemname = item.id
+            )
         }
     }
 
@@ -60,7 +71,7 @@ fun ResultScreen(marsUiState: List<MarsPhotos>, modifier: Modifier = Modifier) {
 
 
 @Composable
-fun itemList(image_url:String, modifier: Modifier){
+fun itemList(image_url:String, modifier: Modifier,itemname:String){
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier.fillMaxSize()
@@ -68,7 +79,14 @@ fun itemList(image_url:String, modifier: Modifier){
         Image(
             painter = rememberAsyncImagePainter(image_url),
             contentDescription = null,
-            modifier = Modifier.size(128.dp)
+            modifier = Modifier.size(300.dp)
+        )
+        Text(
+            text = "Photo $itemname",
+            color = Color.White,
+            modifier = Modifier
+                .background(Color.Black)
+                .align(Alignment.BottomStart)
         )
     }
 }

@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 
 sealed interface MarsUiState {
-    data class Success(val listOfObjectPhotos: List<MarsPhotos>) : MarsUiState
+    data class Success(val photos: List<MarsPhotos>) : MarsUiState
     object Error : MarsUiState
     object Loading : MarsUiState
 }
@@ -48,25 +48,16 @@ class MarsViewModel : ViewModel() {
     /**
      * Gets Mars photos information from the Mars API
      */
-    private fun getMarsPhotos() {
-        viewModelScope.launch {
-            try {
-                val listResult = MarsApi.retrofitService
-                    .getPhotos()
-                    .execute()
-                    .body()
-                    ?.let {
-                        MarsUiState.Success(it)
-                    }
-            }
-            catch (e:IOException){
-                MarsUiState.Error
-            }
+    fun getMarsPhotos() {
+       viewModelScope.launch {
+          marsUiState =  try {
+               val listResult = MarsApi.retrofitService.getPhotos()
+               MarsUiState.Success(listResult)
+           } catch (e:IOException){
+               MarsUiState.Error
+           }
 
-        }
 
+       }
     }
-
-
-
 }

@@ -1,12 +1,14 @@
 package com.example.marsphotos.datamodels
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MarsPhotos(
 
-	@SerializedName("id")
+	@SerialName("id")
 	val id: String,
 
-	@SerializedName("img_src")
+	@SerialName("img_src")
 	val imgSrc: String
 )
