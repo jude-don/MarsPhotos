@@ -19,16 +19,21 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.example.marsphotos.datamodels.MarsPhotos
 
 @Composable
@@ -49,20 +54,16 @@ fun HomeScreen(
  */
 @Composable
 fun ResultScreen(marsUiState: List<MarsPhotos>, modifier: Modifier = Modifier) {
-//    Box(
-//        contentAlignment = Alignment.Center,
-//        modifier = modifier.fillMaxSize()
-//    ) {
-//        Text(text = marsUiState)
-//    }
+
     
     LazyColumn(){
-        items(marsUiState){
-            item->
+        itemsIndexed(marsUiState){
+            index,item->
             itemList(
                 image_url = item.imgSrc,
                 modifier = modifier,
-                itemname = item.id
+                itemname = index,
+
             )
         }
     }
@@ -70,14 +71,21 @@ fun ResultScreen(marsUiState: List<MarsPhotos>, modifier: Modifier = Modifier) {
 }
 
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun itemList(image_url:String, modifier: Modifier,itemname:String){
+fun itemList(image_url:String, modifier: Modifier,itemname:Int){
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier.fillMaxSize()
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(image_url),
+//        Image(
+//            painter = rememberAsyncImagePainter(image_url),
+//            contentDescription = null,
+//            modifier = Modifier.size(300.dp)
+//        )
+        //Glide is the best to load images
+        GlideImage(
+            model = image_url,
             contentDescription = null,
             modifier = Modifier.size(300.dp)
         )
@@ -85,8 +93,9 @@ fun itemList(image_url:String, modifier: Modifier,itemname:String){
             text = "Photo $itemname",
             color = Color.White,
             modifier = Modifier
-                .background(Color.Black)
                 .align(Alignment.BottomStart)
+                .padding(start = 30.dp)
+                .background(Color.Black)
         )
     }
 }
