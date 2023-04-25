@@ -1,16 +1,13 @@
 package com.example.marsphotos.network
 
 import com.example.marsphotos.datamodels.MarsPhotos
-import com.example.marsphotos.ui.screens.MarsUiState
-import retrofit2.Call
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import retrofit2.http.GET
 
-private const val BASE_URL =
+const val BASE_URL =
     "https://android-kotlin-fun-mars-server.appspot.com/"
 
 private val retrofit = Retrofit.Builder()
@@ -21,7 +18,7 @@ private val retrofit = Retrofit.Builder()
 
 interface MarsApiService {
     @GET("photos")
-    suspend fun getPhotos():List<MarsPhotos>
+    suspend fun getPhotos(): List<MarsPhotos>
     //suspend fun getPhotos():Call<List<MarsPhotos>>
 
 }

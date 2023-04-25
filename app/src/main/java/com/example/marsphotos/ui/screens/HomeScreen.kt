@@ -30,19 +30,23 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.marsphotos.datamodels.MarsPhotos
 
 @Composable
 fun HomeScreen(
-    marsUiState: MarsUiState,
+    viewModel: MarsViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
-    when (marsUiState){
-        is MarsUiState.Success -> ResultScreen(marsUiState.photos, modifier)
+    when (val state = viewModel.marsUiState){
+        is MarsUiState.Success -> ResultScreen(state.photos, modifier)
         is MarsUiState.Loading -> LoadingScreen(modifier)
         is MarsUiState.Error -> ErrorScreen(modifier)
     }
@@ -54,15 +58,16 @@ fun HomeScreen(
  */
 @Composable
 fun ResultScreen(marsUiState: List<MarsPhotos>, modifier: Modifier = Modifier) {
-
+var number = 1
     
     LazyColumn(){
         itemsIndexed(marsUiState){
             index,item->
+            number = index + 1
             itemList(
                 image_url = item.imgSrc,
                 modifier = modifier,
-                itemname = index,
+                itemname = number,
 
             )
         }
@@ -84,11 +89,18 @@ fun itemList(image_url:String, modifier: Modifier,itemname:Int){
 //            modifier = Modifier.size(300.dp)
 //        )
         //Glide is the best to load images
-        GlideImage(
+        AsyncImage(
             model = image_url,
-            contentDescription = null,
+            contentDescription = "Mars Photo",
+            contentScale = ContentScale.Fit,
             modifier = Modifier.size(300.dp)
         )
+//        Image(
+//            painter = rememberAsyncImagePainter(image_url),
+//            contentDescription = "Mars Photo",
+//            contentScale = ContentScale.Fit,
+//            modifier = Modifier.size(300.dp)
+//        )
         Text(
             text = "Photo $itemname",
             color = Color.White,

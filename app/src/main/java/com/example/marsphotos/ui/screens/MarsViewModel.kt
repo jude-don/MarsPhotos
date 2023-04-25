@@ -22,8 +22,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.marsphotos.datamodels.MarsPhotos
 import com.example.marsphotos.network.MarsApi
+import com.example.marsphotos.network.local.MarsRepository
+import com.example.marsphotos.network.local.MarsRepositoryImpl
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
+import javax.inject.Inject
 
 sealed interface MarsUiState {
     data class Success(val photos: List<MarsPhotos>) : MarsUiState
@@ -32,8 +38,8 @@ sealed interface MarsUiState {
 }
 
 
-
-class MarsViewModel : ViewModel() {
+@HiltViewModel
+class MarsViewModel @Inject constructor(private val repository: MarsRepositoryImpl) : ViewModel() {
     /** The mutable State that stores the status of the most recent request */
     var marsUiState: MarsUiState by mutableStateOf(MarsUiState.Loading)
         private set
@@ -51,8 +57,10 @@ class MarsViewModel : ViewModel() {
     fun getMarsPhotos() {
        viewModelScope.launch {
           marsUiState =  try {
-               val listResult = MarsApi.retrofitService.getPhotos()
-               MarsUiState.Success(listResult)
+              withContext(Dispatchers.IO) {
+                  val listResult = repository.getData()
+                  MarsUiState.Success(listResult)
+              }
            } catch (e:IOException){
                MarsUiState.Error
            }
